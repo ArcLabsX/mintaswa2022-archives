@@ -9,13 +9,13 @@
 
   /* ---------------------------------------------------------------------
      0. Supabase client
-     NOTE: the anon key below was provided starting with a capital "EyJ" -
+     NOTE: the anon key below was provided starting with a capital "eyJ" -
      standard Supabase/JWT keys start with a lowercase "eyJ". Double-check
      this value in Supabase (Project Settings > API) if the site can't
      read/write data; it may be a transcription typo.
      --------------------------------------------------------------------- */
   var SUPABASE_URL = "https://feyfojsezizwwifdwhpe.supabase.co";
-  var SUPABASE_ANON_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZleWZvanNleml6d3dpZmR3aHBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4Nzg0ODQsImV4cCI6MjEwMjQ1NDQ4NH0.hz4IXXNPC71_0U3zpfzGysacrzufINQYVTOF3HZflc0";
+  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZleWZvanNleml6d3dpZmR3aHBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4Nzg0ODQsImV4cCI6MjEwMjQ1NDQ4NH0.hz4IXXNPC71_0U3zpfzGysacrzufINQYVTOF3HZflc0";
 
   var sb = null;
   try {
