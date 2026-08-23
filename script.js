@@ -15,7 +15,7 @@
      read/write data; it may be a transcription typo.
      --------------------------------------------------------------------- */
   var SUPABASE_URL = "https://feyfojsezizwwifdwhpe.supabase.co";
-  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZleWZvanNleml6d3dpZmR3aHBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4Nzg0ODQsImV4cCI6MjEwMjQ1NDQ4NH0.hz4IXXNPC71_0U3zpfzGysacrzufINQYVTOF3HZflc0";
+  var SUPABASE_ANON_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZleWZvanNleml6d3dpZmR3aHBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4Nzg0ODQsImV4cCI6MjEwMjQ1NDQ4NH0.hz4IXXNPC71_0U3zpfzGysacrzufINQYVTOF3HZflc0";
 
   var sb = null;
   try {
@@ -31,6 +31,63 @@
   var GALLERY_BUCKET = "gallery";
   var MAX_MESSAGES = 10;
   var PASSCODE = "mintaswa2022";
+
+  /* ---------------------------------------------------------------------
+     0b. GitHub repo photos (assets/ = Album Kenangan archive photos,
+     assets2/ = school photos + audio). File lists are NOT hardcoded -
+     they're discovered at runtime via the GitHub Contents API, so simply
+     adding/removing files in those folders on GitHub updates the site
+     automatically. If this site ever moves to a different repo/owner,
+     update the three constants below.
+     --------------------------------------------------------------------- */
+  var GITHUB_OWNER = "ArcLabsX";
+  var GITHUB_REPO = "mintaswa2022-archives";
+  var GITHUB_BRANCH = "main";
+  var ASSETS_PATH = "assets";
+  var ASSETS2_PATH = "assets2";
+  var IMAGE_EXT = ["jpg", "jpeg", "png", "webp", "gif"];
+  var AUDIO_EXT = ["mp3", "wav", "m4a", "ogg", "aac"];
+
+  function fileExt(name) {
+    var parts = (name || "").split(".");
+    return parts.length > 1 ? parts.pop().toLowerCase() : "";
+  }
+  function isImageName(name) { return IMAGE_EXT.indexOf(fileExt(name)) !== -1; }
+  function isAudioName(name) { return AUDIO_EXT.indexOf(fileExt(name)) !== -1; }
+
+  async function fetchGithubFolder(path) {
+    var url = "https://api.github.com/repos/" + GITHUB_OWNER + "/" + GITHUB_REPO + "/contents/" + path + "?ref=" + GITHUB_BRANCH;
+    try {
+      var res = await fetch(url, { headers: { "Accept": "application/vnd.github+json" } });
+      if (!res.ok) throw new Error("GitHub API responded " + res.status);
+      var data = await res.json();
+      return Array.isArray(data) ? data : [];
+    } catch (err) {
+      console.error("fetchGithubFolder(" + path + ") error:", err);
+      return [];
+    }
+  }
+  function sortByNameAlpha(items) {
+    return items.slice().sort(function (a, b) {
+      return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" });
+    });
+  }
+  function toGithubPhotoObj(item, folderPath) {
+    return {
+      id: "gh_" + folderPath + "_" + item.name,
+      image_url: folderPath + "/" + encodeURIComponent(item.name),
+      uploader_name: null,
+      source: "github",
+      created_at: null
+    };
+  }
+
+  var githubAlbumPhotos = [];
+  async function loadGithubAlbumPhotos() {
+    var items = await fetchGithubFolder(ASSETS_PATH);
+    var images = sortByNameAlpha(items.filter(function (it) { return it.type === "file" && isImageName(it.name); }));
+    githubAlbumPhotos = images.map(function (it) { return toGithubPhotoObj(it, ASSETS_PATH); });
+  }
 
   /* ---------------------------------------------------------------------
      1. i18n dictionary
@@ -99,7 +156,11 @@
       "editphoto.hint": "Ubah nama yang tampil pada foto ini.",
       "editphoto.error": "Gagal menyimpan perubahan. Coba lagi.",
       "confirm.title": "Hapus foto ini?",
-      "confirm.message": "Tindakan ini tidak bisa dibatalkan."
+      "confirm.message": "Tindakan ini tidak bisa dibatalkan.",
+      "school.audio": "🔊 Suara Mintaswa",
+      "school.headmaster": "Kepala Sekolah",
+      "school.staff": "Guru & Staff",
+      "school.nophotos": "Foto sekolah belum tersedia."
     },
     en: {
       "nav.menu": "Menu",
@@ -164,7 +225,11 @@
       "editphoto.hint": "Change the name shown on this photo.",
       "editphoto.error": "Couldn't save the change. Try again.",
       "confirm.title": "Delete this photo?",
-      "confirm.message": "This action can't be undone."
+      "confirm.message": "This action can't be undone.",
+      "school.audio": "🔊 Sound of Mintaswa",
+      "school.headmaster": "Headmaster",
+      "school.staff": "Teachers & Staff",
+      "school.nophotos": "School photos aren't available yet."
     }
   };
 
@@ -574,8 +639,10 @@
   });
 
   /* ---------------------------------------------------------------------
-     13. Gallery: Supabase-backed photos (fetch, render, upload, edit,
-     delete, realtime, heart-burst "like" on double-tap)
+     13. Gallery: assets/ (GitHub, archive photos) + Supabase (uploader
+     photos) merged together. Preview = up to 9 GitHub + up to 3 latest
+     uploader photos (max 12). Full gallery modal shows everything.
+     GitHub photos cannot be edited/deleted by visitors.
      --------------------------------------------------------------------- */
   var galleryGrid = document.getElementById("galleryGrid");
   var galleryEmpty = document.getElementById("galleryEmpty");
@@ -588,14 +655,22 @@
   var viewAllBtn = document.getElementById("viewAllBtn");
   var navManageGalleryBtn = document.getElementById("navManageGalleryBtn");
 
-  var photosCache = [];
+  var photosCache = []; // Supabase uploader photos, newest first
+  var supabaseLoadError = false;
+
+  function getPreviewAlbumPhotos() {
+    return githubAlbumPhotos.slice(0, 9).concat(photosCache.slice(0, 3));
+  }
+  function getFullAlbumPhotos() {
+    return githubAlbumPhotos.concat(photosCache);
+  }
 
   async function fetchPhotos() {
     if (!sb) return null;
     try {
       var res = await sb.from("gallery_photos").select("*").order("created_at", { ascending: false });
       if (res.error) throw res.error;
-      return res.data || [];
+      return (res.data || []).map(function (p) { p.source = "supabase"; return p; });
     } catch (err) {
       console.error("fetchPhotos error:", err);
       return null;
@@ -638,10 +713,7 @@
     img.addEventListener("error", function () { item.classList.add("img-missing"); });
     item.appendChild(img);
     addRipple(item);
-    item.addEventListener("click", function () {
-      var idx = photosCache.findIndex(function (p) { return p.id === photo.id; });
-      openLightbox(idx >= 0 ? idx : 0);
-    });
+    item.addEventListener("click", function () { openLightbox(photo); });
     return item;
   }
 
@@ -665,50 +737,52 @@
       } else {
         clickTimer = setTimeout(function () {
           clickTimer = null;
-          var idx = photosCache.findIndex(function (p) { return p.id === photo.id; });
-          openLightbox(idx >= 0 ? idx : 0);
+          openLightbox(photo);
         }, 260);
       }
     });
-
-    var menuBtn = document.createElement("button");
-    menuBtn.type = "button";
-    menuBtn.className = "fg-menu-btn";
-    menuBtn.setAttribute("aria-label", "Menu foto");
-    menuBtn.innerHTML = "<span></span><span></span><span></span>";
-
-    var menu = document.createElement("div");
-    menu.className = "fg-menu";
-    var editBtn = document.createElement("button");
-    editBtn.type = "button";
-    editBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3z" stroke="#152238" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><span>' + t("action.editcaption") + '</span>';
-    var delBtn = document.createElement("button");
-    delBtn.type = "button";
-    delBtn.className = "fg-delete";
-    delBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V4.5h6V7M6 7l1 13h10l1-13" stroke="#b33d3d" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><span>' + t("action.delete") + '</span>';
-    menu.appendChild(editBtn);
-    menu.appendChild(delBtn);
-
-    menuBtn.addEventListener("click", function (e) {
-      e.stopPropagation();
-      var wasOpen = menu.classList.contains("is-open");
-      closeAllFgMenus();
-      if (!wasOpen) menu.classList.add("is-open");
-    });
-    editBtn.addEventListener("click", function (e) {
-      e.stopPropagation();
-      menu.classList.remove("is-open");
-      handleEditPhoto(photo);
-    });
-    delBtn.addEventListener("click", function (e) {
-      e.stopPropagation();
-      menu.classList.remove("is-open");
-      handleDeletePhoto(photo, item);
-    });
-
     item.appendChild(img);
-    item.appendChild(menuBtn);
-    item.appendChild(menu);
+
+    if (photo.source !== "github") {
+      var menuBtn = document.createElement("button");
+      menuBtn.type = "button";
+      menuBtn.className = "fg-menu-btn";
+      menuBtn.setAttribute("aria-label", "Menu foto");
+      menuBtn.innerHTML = "<span></span><span></span><span></span>";
+
+      var menu = document.createElement("div");
+      menu.className = "fg-menu";
+      var editBtn = document.createElement("button");
+      editBtn.type = "button";
+      editBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3z" stroke="#152238" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><span>' + t("action.editcaption") + '</span>';
+      var delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "fg-delete";
+      delBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V4.5h6V7M6 7l1 13h10l1-13" stroke="#b33d3d" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><span>' + t("action.delete") + '</span>';
+      menu.appendChild(editBtn);
+      menu.appendChild(delBtn);
+
+      menuBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var wasOpen = menu.classList.contains("is-open");
+        closeAllFgMenus();
+        if (!wasOpen) menu.classList.add("is-open");
+      });
+      editBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        menu.classList.remove("is-open");
+        handleEditPhoto(photo);
+      });
+      delBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        menu.classList.remove("is-open");
+        handleDeletePhoto(photo, item);
+      });
+
+      item.appendChild(menuBtn);
+      item.appendChild(menu);
+    }
+
     if (photo.uploader_name) {
       var cap = document.createElement("span");
       cap.className = "fg-caption";
@@ -718,32 +792,34 @@
     return item;
   }
 
-  function renderHomeGallery(photos) {
+  function renderHomeGallery() {
+    var preview = getPreviewAlbumPhotos();
     galleryGrid.innerHTML = "";
-    if (!photos || !photos.length) {
+    if (!preview.length) {
       galleryGrid.hidden = true;
       galleryEmpty.hidden = false;
-      galleryEmpty.textContent = photos === null ? t("gallery.loaderror") : t("gallery.empty");
+      galleryEmpty.textContent = supabaseLoadError ? t("gallery.loaderror") : t("gallery.empty");
       return;
     }
     galleryGrid.hidden = false;
     galleryEmpty.hidden = true;
-    photos.slice(0, 8).forEach(function (photo) {
+    preview.forEach(function (photo) {
       galleryGrid.appendChild(createGalleryItemEl(photo));
     });
   }
 
-  function renderFullGallery(photos) {
+  function renderFullGallery() {
+    var all = getFullAlbumPhotos();
     fullGalleryGrid.innerHTML = "";
-    if (!photos || !photos.length) {
+    if (!all.length) {
       fullGalleryGrid.hidden = true;
       fullGalleryEmpty.hidden = false;
-      fullGalleryEmpty.textContent = photos === null ? t("gallery.loaderror") : t("gallery.empty");
+      fullGalleryEmpty.textContent = supabaseLoadError ? t("gallery.loaderror") : t("gallery.empty");
       return;
     }
     fullGalleryGrid.hidden = false;
     fullGalleryEmpty.hidden = true;
-    photos.forEach(function (photo) {
+    all.forEach(function (photo) {
       fullGalleryGrid.appendChild(createFullGalleryItemEl(photo));
     });
   }
@@ -751,8 +827,18 @@
   async function loadPhotos() {
     var photos = await fetchPhotos();
     photosCache = photos || [];
-    renderHomeGallery(photos);
-    if (fullGalleryModal.classList.contains("is-open")) renderFullGallery(photos);
+    supabaseLoadError = (photos === null);
+    renderHomeGallery();
+    if (fullGalleryModal.classList.contains("is-open")) renderFullGallery();
+  }
+
+  async function initAlbum() {
+    var ghPromise = loadGithubAlbumPhotos();
+    var photos = await fetchPhotos();
+    photosCache = photos || [];
+    supabaseLoadError = (photos === null);
+    await ghPromise;
+    renderHomeGallery();
   }
 
   function handleUploadPhoto() {
@@ -814,7 +900,7 @@
   }
 
   function openFullGallery() {
-    renderFullGallery(photosCache.length ? photosCache : null);
+    renderFullGallery();
     openModal(fullGalleryModal);
     loadPhotos();
   }
@@ -847,7 +933,8 @@
   }
 
   /* ---------------------------------------------------------------------
-     14. Lightbox (photo viewer, driven by photosCache)
+     14. Lightbox: full-resolution photo viewer with pinch/double-tap/
+     wheel zoom + pan, works for any photo set (album or school gallery)
      --------------------------------------------------------------------- */
   var lightbox = document.getElementById("lightbox");
   var lightboxImg = document.getElementById("lightboxImg");
@@ -855,26 +942,55 @@
   var lightboxClose = document.getElementById("lightboxClose");
   var lightboxPrev = document.getElementById("lightboxPrev");
   var lightboxNext = document.getElementById("lightboxNext");
+  var lightboxPhotos = [];
   var currentIndex = 0;
 
+  var zoomScale = 1, panX = 0, panY = 0;
+  function applyZoomTransform(animate) {
+    lightboxImg.style.transition = animate ? "transform .25s ease" : "none";
+    lightboxImg.style.transform = "translate(" + panX + "px, " + panY + "px) scale(" + zoomScale + ")";
+    lightboxImg.classList.toggle("is-zoomed", zoomScale > 1.01);
+  }
+  function clampPan() {
+    var maxOffset = (zoomScale - 1) * 170;
+    panX = Math.max(-maxOffset, Math.min(maxOffset, panX));
+    panY = Math.max(-maxOffset, Math.min(maxOffset, panY));
+  }
+  function resetZoom() {
+    zoomScale = 1; panX = 0; panY = 0;
+    applyZoomTransform(false);
+  }
+
   function showPhoto(index) {
-    if (!photosCache.length) return;
-    currentIndex = (index + photosCache.length) % photosCache.length;
-    var photo = photosCache[currentIndex];
+    if (!lightboxPhotos.length) return;
+    currentIndex = (index + lightboxPhotos.length) % lightboxPhotos.length;
+    var photo = lightboxPhotos[currentIndex];
+    resetZoom();
     lightboxImg.src = photo.image_url;
     lightboxImg.alt = photo.uploader_name || "";
     lightboxCounter.textContent = t("lightbox.counter")
       .replace("{n}", currentIndex + 1)
-      .replace("{total}", photosCache.length);
+      .replace("{total}", lightboxPhotos.length);
   }
-  function openLightbox(index) {
+  function openLightboxFromSet(list, index) {
+    lightboxPhotos = list;
     showPhoto(index);
     lightbox.classList.add("is-open");
     document.body.style.overflow = "hidden";
   }
+  function openLightbox(photoOrIndex) {
+    var full = getFullAlbumPhotos();
+    if (typeof photoOrIndex === "number") {
+      openLightboxFromSet(full, photoOrIndex);
+      return;
+    }
+    var idx = full.findIndex(function (p) { return p.id === photoOrIndex.id; });
+    openLightboxFromSet(full, idx >= 0 ? idx : 0);
+  }
   function closeLightbox() {
     lightbox.classList.remove("is-open");
     document.body.style.overflow = "";
+    resetZoom();
   }
   lightboxClose.addEventListener("click", closeLightbox);
   lightboxPrev.addEventListener("click", function () { showPhoto(currentIndex - 1); });
@@ -882,24 +998,153 @@
   lightbox.addEventListener("click", function (e) {
     if (e.target === lightbox) closeLightbox();
   });
+
+  /* Swipe to navigate (only when not zoomed in) */
   var touchStartX = 0;
-  lightbox.addEventListener("touchstart", function (e) { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+  lightbox.addEventListener("touchstart", function (e) {
+    if (e.touches.length === 1) touchStartX = e.touches[0].clientX;
+  }, { passive: true });
   lightbox.addEventListener("touchend", function (e) {
+    if (zoomScale > 1.01) return;
     var dx = e.changedTouches[0].clientX - touchStartX;
     if (Math.abs(dx) > 40) showPhoto(currentIndex + (dx < 0 ? 1 : -1));
   }, { passive: true });
 
-  /* "lihat semua ›" under Mintaswa still points to another repository (coming soon) */
-  var otherRepoUrl = "#";
-  function goToOtherRepo() {
-    if (!otherRepoUrl || otherRepoUrl === "#") {
-      showToast(t("toast.comingsoon"));
+  /* Pinch-to-zoom + drag-to-pan */
+  function touchDist(t1, t2) {
+    var dx = t1.clientX - t2.clientX, dy = t1.clientY - t2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  var pinchStartDist = 0, pinchStartScale = 1;
+  var isPanning = false, panStartX = 0, panStartY = 0, panOriginX = 0, panOriginY = 0;
+
+  lightboxImg.addEventListener("touchstart", function (e) {
+    if (e.touches.length === 2) {
+      pinchStartDist = touchDist(e.touches[0], e.touches[1]);
+      pinchStartScale = zoomScale;
+    } else if (e.touches.length === 1 && zoomScale > 1.01) {
+      isPanning = true;
+      lightboxImg.classList.add("is-panning");
+      panStartX = e.touches[0].clientX;
+      panStartY = e.touches[0].clientY;
+      panOriginX = panX;
+      panOriginY = panY;
+    }
+  }, { passive: true });
+  lightboxImg.addEventListener("touchmove", function (e) {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      var d = touchDist(e.touches[0], e.touches[1]);
+      if (pinchStartDist > 0) {
+        zoomScale = Math.max(1, Math.min(4, pinchStartScale * (d / pinchStartDist)));
+        clampPan();
+        applyZoomTransform(false);
+      }
+    } else if (e.touches.length === 1 && isPanning) {
+      e.preventDefault();
+      panX = panOriginX + (e.touches[0].clientX - panStartX);
+      panY = panOriginY + (e.touches[0].clientY - panStartY);
+      clampPan();
+      applyZoomTransform(false);
+    }
+  }, { passive: false });
+  lightboxImg.addEventListener("touchend", function () {
+    isPanning = false;
+    lightboxImg.classList.remove("is-panning");
+    if (zoomScale < 1.05) resetZoom();
+  });
+
+  /* Double-tap / double-click to toggle zoom */
+  var imgClickTimer = null;
+  lightboxImg.addEventListener("click", function () {
+    if (imgClickTimer) {
+      clearTimeout(imgClickTimer);
+      imgClickTimer = null;
+      if (zoomScale > 1.01) {
+        resetZoom();
+      } else {
+        zoomScale = 2.4; panX = 0; panY = 0;
+        applyZoomTransform(true);
+      }
+    } else {
+      imgClickTimer = setTimeout(function () { imgClickTimer = null; }, 280);
+    }
+  });
+
+  /* Mouse-wheel zoom (desktop) */
+  lightboxImg.addEventListener("wheel", function (e) {
+    e.preventDefault();
+    zoomScale = Math.max(1, Math.min(4, zoomScale + (e.deltaY < 0 ? 0.18 : -0.18)));
+    clampPan();
+    applyZoomTransform(false);
+    if (zoomScale < 1.05) resetZoom();
+  }, { passive: false });
+
+  /* ---------------------------------------------------------------------
+     14b. Mintaswa / school modal: assets2/ photos (all, discovered
+     dynamically) + audio player + static staff roster
+     --------------------------------------------------------------------- */
+  var schoolModal = document.getElementById("schoolModal");
+  var schoolModalClose = document.getElementById("schoolModalClose");
+  var schoolGallery = document.getElementById("schoolGallery");
+  var schoolAudioWrap = document.getElementById("schoolAudioWrap");
+  var schoolAudio = document.getElementById("schoolAudio");
+  var mintaswaViewAllBtn = document.getElementById("mintaswaViewAllBtn");
+
+  var schoolPhotos = [];
+  var schoolMediaLoaded = false;
+
+  function renderSchoolGallery() {
+    schoolGallery.innerHTML = "";
+    if (!schoolPhotos.length) {
+      var p = document.createElement("p");
+      p.className = "school-gallery-empty";
+      p.textContent = t("school.nophotos");
+      schoolGallery.appendChild(p);
       return;
     }
-    window.open(otherRepoUrl, "_blank", "noopener");
+    schoolPhotos.forEach(function (photo, i) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "school-gallery-item pop-in";
+      var img = document.createElement("img");
+      img.src = photo.image_url;
+      img.alt = "Foto Mintaswa";
+      img.loading = "lazy";
+      btn.appendChild(img);
+      addRipple(btn);
+      btn.addEventListener("click", function () { openLightboxFromSet(schoolPhotos, i); });
+      schoolGallery.appendChild(btn);
+    });
   }
-  var mintaswaViewAllBtn = document.getElementById("mintaswaViewAllBtn");
-  if (mintaswaViewAllBtn) mintaswaViewAllBtn.addEventListener("click", goToOtherRepo);
+
+  async function loadSchoolMedia() {
+    if (schoolMediaLoaded) return;
+    schoolMediaLoaded = true;
+    var items = await fetchGithubFolder(ASSETS2_PATH);
+    var images = sortByNameAlpha(items.filter(function (it) { return it.type === "file" && isImageName(it.name); }));
+    schoolPhotos = images.map(function (it) { return toGithubPhotoObj(it, ASSETS2_PATH); });
+    renderSchoolGallery();
+
+    var audioFile = items.find(function (it) { return it.type === "file" && isAudioName(it.name); });
+    if (audioFile) {
+      schoolAudio.src = ASSETS2_PATH + "/" + encodeURIComponent(audioFile.name);
+      schoolAudioWrap.hidden = false;
+    } else {
+      schoolAudioWrap.hidden = true;
+    }
+  }
+  function openSchoolModal() {
+    openModal(schoolModal);
+    loadSchoolMedia();
+  }
+  function closeSchoolModal() {
+    closeModal(schoolModal);
+    if (schoolAudio) schoolAudio.pause();
+  }
+  schoolModalClose.addEventListener("click", closeSchoolModal);
+  schoolModal.addEventListener("click", function (e) { if (e.target === schoolModal) closeSchoolModal(); });
+  if (mintaswaViewAllBtn) mintaswaViewAllBtn.addEventListener("click", openSchoolModal);
 
   /* ---------------------------------------------------------------------
      15. Messages: Supabase-backed guestbook feed (max 10, auto-trimmed)
@@ -994,14 +1239,17 @@
         var spread = (i - (count - 1) / 2) * 70;
         var travel = window.innerHeight * 0.9;
         var rotateStart = -35 + spread / 4;
+        var wobble = (i % 2 === 0 ? 1 : -1) * (6 + i * 2);
 
         var anim = plane.animate(
           [
             { transform: "translate(0, 0) rotate(" + rotateStart + "deg) scale(.6)", opacity: 0 },
-            { transform: "translate(" + spread * 0.3 + "px, " + -travel * 0.25 + "px) rotate(" + (rotateStart - 5) + "deg) scale(1)", opacity: 1, offset: 0.18 },
-            { transform: "translate(" + spread + "px, " + -travel + "px) rotate(" + (rotateStart - 20) + "deg) scale(.7)", opacity: 0 }
+            { transform: "translate(" + spread * 0.22 + "px, " + -travel * 0.16 + "px) rotate(" + (rotateStart - 5) + "deg) scale(1)", opacity: 1, offset: 0.14 },
+            { transform: "translate(" + (spread * 0.55 + wobble) + "px, " + -travel * 0.5 + "px) rotate(" + (rotateStart - 12) + "deg) scale(.92)", opacity: 1, offset: 0.55 },
+            { transform: "translate(" + (spread * 0.8) + "px, " + -travel * 0.78 + "px) rotate(" + (rotateStart - 18) + "deg) scale(.8)", opacity: .85, offset: 0.82 },
+            { transform: "translate(" + spread + "px, " + -travel + "px) rotate(" + (rotateStart - 24) + "deg) scale(.65)", opacity: 0 }
           ],
-          { duration: 1400 + i * 120, easing: "cubic-bezier(.3,.6,.4,1)", delay: i * 70 }
+          { duration: 2600 + i * 220, easing: "cubic-bezier(.4,.05,.3,1)", delay: i * 110, fill: "forwards" }
         );
         anim.onfinish = function () { plane.remove(); };
       })(i);
@@ -1099,6 +1347,7 @@
     if (photoFormModal.classList.contains("is-open")) { closePhotoForm(); return; }
     if (confirmModal.classList.contains("is-open")) { closeConfirm(false); return; }
     if (fullGalleryModal.classList.contains("is-open")) { closeModal(fullGalleryModal); return; }
+    if (schoolModal.classList.contains("is-open")) { closeSchoolModal(); return; }
     if (aboutModal.classList.contains("is-open")) { closeModal(aboutModal); return; }
     if (profilModal.classList.contains("is-open")) { closeModal(profilModal); return; }
     if (mobileNav.classList.contains("is-open")) { closeNav(); return; }
@@ -1107,7 +1356,7 @@
   /* ---------------------------------------------------------------------
      19. Initial data load
      --------------------------------------------------------------------- */
-  loadPhotos();
+  initAlbum();
   loadMessages();
   subscribeGalleryRealtime();
   subscribeMessagesRealtime();
