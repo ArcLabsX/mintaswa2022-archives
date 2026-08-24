@@ -23,7 +23,7 @@
   </div>
   <a href="#hero" class="mobile-nav-link" data-i18n="nav.home">Beranda</a>
   <a href="#profil-angkatan" class="mobile-nav-link" data-i18n="nav.profil">Profil Angkatan</a>
-  <a href="#kenangan" class="mobile-nav-link" data-i18n="nav.album">Album Kenangan</a>
+  <a href="#kenangan" class="mobile-nav-link" data-i18n="nav.album">Album Angkatan</a>
   <a href="#mintaswa" class="mobile-nav-link" data-i18n="nav.mintaswa">Mintaswa</a>
   <a href="#kirim-pesan" class="mobile-nav-link" data-i18n="nav.kirim">Kirim Pesan</a>
   <button type="button" class="mobile-nav-link mobile-nav-manage" id="navManageGalleryBtn" data-i18n="nav.manage">Kelola foto (edit/hapus)</button>
@@ -132,7 +132,7 @@
 
     <!-- ===== Gallery ===== -->
     <section class="kenangan reveal" id="kenangan">
-      <h2 data-i18n="kenangan.title">Album Kenangan</h2>
+      <h2 data-i18n="kenangan.title">Album Angkatan</h2>
       <div class="gallery-grid" id="galleryGrid">
         <div class="gallery-skel"></div>
         <div class="gallery-skel"></div>
@@ -311,15 +311,11 @@
   </div>
 </div>
 
-<!-- ===== Full gallery modal (all photos, edit/delete menu) ===== -->
+<!-- ===== Full gallery modal (view-only: all photos, caption only) ===== -->
 <div class="modal modal-fullgallery" id="fullGalleryModal" role="dialog" aria-modal="true">
   <div class="modal-card modal-card-lg">
     <button class="modal-close" id="fullGalleryClose" aria-label="Tutup">&times;</button>
-    <h3 data-i18n="kenangan.title">Album Kenangan</h3>
-    <button class="gallery-add" id="fullGalleryAddBtn" type="button">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M12 5v14M5 12h14" stroke="#152238" stroke-width="2" stroke-linecap="round"/></svg>
-      <span data-i18n="kenangan.addphoto">Tambah foto dari galeri</span>
-    </button>
+    <h3 data-i18n="kenangan.title">Album Angkatan</h3>
     <div class="full-gallery-grid" id="fullGalleryGrid">
       <div class="gallery-skel"></div>
       <div class="gallery-skel"></div>
@@ -329,6 +325,25 @@
       <div class="gallery-skel"></div>
     </div>
     <p class="gallery-empty" id="fullGalleryEmpty" hidden data-i18n="gallery.empty">Belum ada foto. Jadi yang pertama upload!</p>
+  </div>
+</div>
+
+<!-- ===== Kelola Foto modal (manage: Supabase-uploaded photos only, edit/delete) ===== -->
+<div class="modal modal-fullgallery" id="manageGalleryModal" role="dialog" aria-modal="true">
+  <div class="modal-card modal-card-lg modal-card-manage">
+    <button class="modal-close" id="manageGalleryClose" aria-label="Tutup">&times;</button>
+    <h3 data-i18n="manage.title">Kelola Foto</h3>
+    <p class="modal-hint-text" data-i18n="manage.hint">Foto yang diunggah pengunjung. Foto arsip dari GitHub tidak ditampilkan di sini.</p>
+    <button class="gallery-add" id="manageGalleryAddBtn" type="button">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M12 5v14M5 12h14" stroke="#152238" stroke-width="2" stroke-linecap="round"/></svg>
+      <span data-i18n="kenangan.addphoto">Tambah foto dari galeri</span>
+    </button>
+    <div class="full-gallery-grid" id="manageGalleryGrid">
+      <div class="gallery-skel"></div>
+      <div class="gallery-skel"></div>
+      <div class="gallery-skel"></div>
+    </div>
+    <p class="gallery-empty" id="manageGalleryEmpty" hidden data-i18n="manage.empty">Belum ada foto yang diunggah pengunjung.</p>
   </div>
 </div>
 
@@ -358,7 +373,7 @@
       <img id="photoFormPreview" alt="" hidden>
       <span id="photoFormDropzoneLabel" data-i18n="upload.choose">+ Pilih foto</span>
     </label>
-    <input type="text" id="photoFormName" data-i18n-ph="form.nama" placeholder="Namamu" maxlength="40">
+    <input type="text" id="photoFormName" data-i18n-ph="editphoto.placeholder" placeholder="Tulis keterangan..." maxlength="60">
     <p class="modal-error" id="photoFormError" hidden></p>
     <div class="modal-actions">
       <button type="button" class="btn btn-ghost" id="photoFormCancel" data-i18n="action.cancel">Batal</button>
