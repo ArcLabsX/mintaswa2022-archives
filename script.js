@@ -9,10 +9,6 @@
 
   /* ---------------------------------------------------------------------
      0. Supabase client
-     NOTE: the anon key below was provided starting with a capital "eyJ" -
-     standard Supabase/JWT keys start with a lowercase "eyJ". Double-check
-     this value in Supabase (Project Settings > API) if the site can't
-     read/write data; it may be a transcription typo.
      --------------------------------------------------------------------- */
   var SUPABASE_URL = "https://feyfojsezizwwifdwhpe.supabase.co";
   var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZleWZvanNleml6d3dpZmR3aHBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4Nzg0ODQsImV4cCI6MjEwMjQ1NDQ4NH0.hz4IXXNPC71_0U3zpfzGysacrzufINQYVTOF3HZflc0";
@@ -97,18 +93,18 @@
       "nav.menu": "Menu",
       "nav.home": "Beranda",
       "nav.profil": "Profil Angkatan",
-      "nav.album": "Album Kenangan",
+      "nav.album": "Album Angkatan",
       "nav.mintaswa": "Mintaswa",
       "nav.kirim": "Kirim Pesan",
       "nav.manage": "Kelola foto (edit/hapus)",
-      "hero.desc": "<strong>Mintaswa 2022</strong><br>Arsip digital perjalanan kita sejak langkah pertama di tahun 2016 hingga kelulusan di tahun 2022. Sebuah ruang untuk menyimpan kembali cerita, kenangan, dan jejak satu angkatan di MINU Tambak Sumur.",
+      "hero.desc": "<strong>Mintaswa 2022</strong><br>Arsip digital perjalanan kita selama menempuh pendidikan di Madrasah Ibtidaiyah, sejak langkah pertama hingga kelulusan. Sebuah ruang untuk menyimpan kembali cerita, kenangan, dan jejak satu angkatan di MINU Tambak Sumur.",
       "hero.btn": "Tentang Arsip",
       "rekaman.title": "Jejak Angkatan 2022",
-      "rekaman.album": "Album kenangan",
+      "rekaman.album": "Album angkatan",
       "rekaman.kirim": "Kirim pesan",
       "profil.viewbtn": "lihat profil angkatan",
       "profil.desc": "Yuk, kenang teman-teman kita yang pernah tumbuh dan belajar bersama di MINU Tambak Sumur.",
-      "kenangan.title": "Album Kenangan",
+      "kenangan.title": "Album Angkatan",
       "kenangan.viewall": "lihat semua",
       "kenangan.addphoto": "Tambah foto dari galeri",
       "mintaswa.desc": "MINU Tambak Sumur (2016–2022) pernah menjadi saksi bisu masa-masa saat kita pertama kali belajar, berteman, dan bertumbuh bersama.",
@@ -117,8 +113,8 @@
       "mintaswa.t2022": "Tahun Kelulusan",
       "form.nama": "Namamu",
       "form.pesan": "Tulis kenangan atau pesanmu...",
-      "about.p1": "Mintaswa 2022 Archive lahir dari keinginan sederhana: agar cerita satu angkatan tidak hilang ditelan waktu. Setiap foto, setiap nama, dan setiap kenangan di sini adalah jejak perjalanan kita di masa sekolah.",
-      "about.p2": "Situs ini untuk Alumni 2022 MINU Tambak Sumur, sebagai ruang untuk kembali, mengingat, dan merayakan satu sama lain, kapan pun dan di mana pun.",
+      "about.p1": "Mintaswa Archive lahir dari keinginan sederhana: agar cerita satu angkatan tetap hidup, meski waktu terus berjalan. Setiap foto, setiap nama, dan setiap kenangan di sini adalah bagian dari perjalanan kita selama enam tahun di MINU Tambak Sumur.",
+      "about.p2": "Website ini menjadi ruang untuk kembali mengingat, berbagi cerita, dan merayakan kebersamaan, kapan pun dan di mana pun.",
       "footer.text": "Mintaswa 2022 Archive, dibuat dengan ♥ untuk Class of 2022 MINU Tambak Sumur",
       "toast.sent": "Pesan terkirim! Terima kasih sudah singgah ✈",
       "toast.fillform": "Isi nama dan pesanmu dulu, ya.",
@@ -153,31 +149,35 @@
       "upload.needname": "Isi namamu dulu, ya.",
       "upload.uploaderror": "Gagal mengunggah foto. Coba lagi.",
       "editphoto.title": "Edit Keterangan Foto",
-      "editphoto.hint": "Ubah nama yang tampil pada foto ini.",
+      "editphoto.hint": "Tambahkan keterangan (opsional)",
+      "editphoto.placeholder": "Tulis keterangan...",
       "editphoto.error": "Gagal menyimpan perubahan. Coba lagi.",
       "confirm.title": "Hapus foto ini?",
       "confirm.message": "Tindakan ini tidak bisa dibatalkan.",
       "school.audio": "🔊 Suara Mintaswa",
       "school.headmaster": "Kepala Sekolah",
       "school.staff": "Guru & Staff",
-      "school.nophotos": "Foto sekolah belum tersedia."
+      "school.nophotos": "Foto sekolah belum tersedia.",
+      "manage.title": "Kelola Foto",
+      "manage.hint": "Foto yang diunggah pengunjung. Foto arsip dari GitHub tidak ditampilkan di sini.",
+      "manage.empty": "Belum ada foto yang diunggah pengunjung."
     },
     en: {
       "nav.menu": "Menu",
       "nav.home": "Home",
       "nav.profil": "Class Profiles",
-      "nav.album": "Memory Album",
+      "nav.album": "Class Album",
       "nav.mintaswa": "Mintaswa",
       "nav.kirim": "Send a Message",
       "nav.manage": "Manage photos (edit/delete)",
-      "hero.desc": "<strong>Mintaswa 2022</strong><br>A digital archive of our journey, from our first steps in 2016 to graduation in 2022. A space to keep every story, memory, and trace of one class at MINU Tambak Sumur.",
+      "hero.desc": "<strong>Mintaswa 2022</strong><br>A digital archive of our journey through elementary school, from our first steps to graduation. A space to keep every story, memory, and trace of one class at MINU Tambak Sumur.",
       "hero.btn": "About the Archive",
       "rekaman.title": "Class of 2022 Trail",
-      "rekaman.album": "Memory album",
+      "rekaman.album": "Class album",
       "rekaman.kirim": "Send a message",
       "profil.viewbtn": "view class profiles",
       "profil.desc": "Let's remember the friends who grew up and learned together at MINU Tambak Sumur.",
-      "kenangan.title": "Memory Album",
+      "kenangan.title": "Class Album",
       "kenangan.viewall": "view all",
       "kenangan.addphoto": "Add photo from gallery",
       "mintaswa.desc": "MINU Tambak Sumur (2016–2022) was a silent witness to the days we first learned, made friends, and grew up together.",
@@ -186,8 +186,8 @@
       "mintaswa.t2022": "Graduation Year",
       "form.nama": "Your name",
       "form.pesan": "Write a memory or a message...",
-      "about.p1": "Mintaswa 2022 Archive was born from a simple wish: that one class's story shouldn't fade with time. Every photo, every name, every memory here traces our journey through our school days.",
-      "about.p2": "This site is for the Alumni 2022 of MINU Tambak Sumur, a space to return, remember, and celebrate each other, anytime and anywhere.",
+      "about.p1": "Mintaswa Archive was born from a simple wish: that one class's story stays alive, no matter how much time passes. Every photo, every name, every memory here is part of our six years together at MINU Tambak Sumur.",
+      "about.p2": "This website is a space to return, remember, share stories, and celebrate our time together, anytime and anywhere.",
       "footer.text": "Mintaswa 2022 Archive, made with ♥ for the Class of 2022 of MINU Tambak Sumur",
       "toast.sent": "Message sent! Thanks for stopping by ✈",
       "toast.fillform": "Please fill in your name and message first.",
@@ -222,14 +222,18 @@
       "upload.needname": "Enter your name first.",
       "upload.uploaderror": "Couldn't upload the photo. Try again.",
       "editphoto.title": "Edit Photo Caption",
-      "editphoto.hint": "Change the name shown on this photo.",
+      "editphoto.hint": "Add a caption (optional)",
+      "editphoto.placeholder": "Write a caption...",
       "editphoto.error": "Couldn't save the change. Try again.",
       "confirm.title": "Delete this photo?",
       "confirm.message": "This action can't be undone.",
       "school.audio": "🔊 Sound of Mintaswa",
       "school.headmaster": "Headmaster",
       "school.staff": "Teachers & Staff",
-      "school.nophotos": "School photos aren't available yet."
+      "school.nophotos": "School photos aren't available yet.",
+      "manage.title": "Manage Photos",
+      "manage.hint": "Photos uploaded by visitors. Archive photos from GitHub aren't shown here.",
+      "manage.empty": "No visitor-uploaded photos yet."
     }
   };
 
@@ -472,6 +476,15 @@
     setTimeout(function () { passcodeInput.focus(); }, 300);
     return new Promise(function (resolve) { passcodeResolve = resolve; });
   }
+  /* Always shows the passcode prompt, even if already unlocked this session.
+     Used for destructive actions (deleting a photo) that deserve a fresh check. */
+  function requireCodeFresh() {
+    passcodeInput.value = "";
+    passcodeError.hidden = true;
+    openModal(passcodeModal);
+    setTimeout(function () { passcodeInput.focus(); }, 300);
+    return new Promise(function (resolve) { passcodeResolve = resolve; });
+  }
   function submitPasscode() {
     var val = passcodeInput.value.trim();
     if (val && val === PASSCODE) {
@@ -613,9 +626,8 @@
       if (!file) { showPhotoFormError(t("upload.needphoto")); return; }
       runPhotoFormSubmit({ file: file });
     } else {
-      var name = photoFormName.value.trim();
-      if (!name) { showPhotoFormError(t("upload.needname")); return; }
-      runPhotoFormSubmit({ name: name });
+      var caption = photoFormName.value.trim();
+      runPhotoFormSubmit({ name: caption });
     }
   });
   function runPhotoFormSubmit(data) {
@@ -651,8 +663,12 @@
   var fullGalleryGrid = document.getElementById("fullGalleryGrid");
   var fullGalleryEmpty = document.getElementById("fullGalleryEmpty");
   var fullGalleryClose = document.getElementById("fullGalleryClose");
-  var fullGalleryAddBtn = document.getElementById("fullGalleryAddBtn");
   var viewAllBtn = document.getElementById("viewAllBtn");
+  var manageGalleryModal = document.getElementById("manageGalleryModal");
+  var manageGalleryGrid = document.getElementById("manageGalleryGrid");
+  var manageGalleryEmpty = document.getElementById("manageGalleryEmpty");
+  var manageGalleryClose = document.getElementById("manageGalleryClose");
+  var manageGalleryAddBtn = document.getElementById("manageGalleryAddBtn");
   var navManageGalleryBtn = document.getElementById("navManageGalleryBtn");
 
   var photosCache = []; // Supabase uploader photos, newest first
@@ -717,9 +733,13 @@
     return item;
   }
 
+  /* View-only gallery item (used in "lihat semua"): image + optional caption,
+     no edit/delete controls at all. Double-tap still shows a fun heart burst. */
   function createFullGalleryItemEl(photo) {
     var item = document.createElement("div");
     item.className = "fg-item";
+    var media = document.createElement("div");
+    media.className = "fg-media";
 
     var img = document.createElement("img");
     img.src = photo.image_url;
@@ -730,10 +750,10 @@
       if (clickTimer) {
         clearTimeout(clickTimer);
         clickTimer = null;
-        var rect = item.getBoundingClientRect();
+        var rect = media.getBoundingClientRect();
         var x = (e.clientX != null ? e.clientX - rect.left : rect.width / 2);
         var y = (e.clientY != null ? e.clientY - rect.top : rect.height / 2);
-        spawnHeartBurst(item, x, y);
+        spawnHeartBurst(media, x, y);
       } else {
         clickTimer = setTimeout(function () {
           clickTimer = null;
@@ -741,54 +761,76 @@
         }, 260);
       }
     });
-    item.appendChild(img);
-
-    if (photo.source !== "github") {
-      var menuBtn = document.createElement("button");
-      menuBtn.type = "button";
-      menuBtn.className = "fg-menu-btn";
-      menuBtn.setAttribute("aria-label", "Menu foto");
-      menuBtn.innerHTML = "<span></span><span></span><span></span>";
-
-      var menu = document.createElement("div");
-      menu.className = "fg-menu";
-      var editBtn = document.createElement("button");
-      editBtn.type = "button";
-      editBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3z" stroke="#152238" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><span>' + t("action.editcaption") + '</span>';
-      var delBtn = document.createElement("button");
-      delBtn.type = "button";
-      delBtn.className = "fg-delete";
-      delBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V4.5h6V7M6 7l1 13h10l1-13" stroke="#b33d3d" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><span>' + t("action.delete") + '</span>';
-      menu.appendChild(editBtn);
-      menu.appendChild(delBtn);
-
-      menuBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        var wasOpen = menu.classList.contains("is-open");
-        closeAllFgMenus();
-        if (!wasOpen) menu.classList.add("is-open");
-      });
-      editBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        menu.classList.remove("is-open");
-        handleEditPhoto(photo);
-      });
-      delBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        menu.classList.remove("is-open");
-        handleDeletePhoto(photo, item);
-      });
-
-      item.appendChild(menuBtn);
-      item.appendChild(menu);
-    }
-
+    media.appendChild(img);
     if (photo.uploader_name) {
       var cap = document.createElement("span");
       cap.className = "fg-caption";
       cap.textContent = photo.uploader_name;
-      item.appendChild(cap);
+      media.appendChild(cap);
     }
+    item.appendChild(media);
+    return item;
+  }
+
+  /* Manage-mode gallery item (used in "Kelola Foto"): Supabase photos only,
+     each with a ☰ menu offering edit caption / delete. */
+  function createManageGalleryItemEl(photo) {
+    var item = document.createElement("div");
+    item.className = "fg-item";
+    var media = document.createElement("div");
+    media.className = "fg-media";
+
+    var img = document.createElement("img");
+    img.src = photo.image_url;
+    img.alt = photo.uploader_name ? ("Kenangan dari " + photo.uploader_name) : "Kenangan";
+    img.loading = "lazy";
+    img.addEventListener("click", function () { openLightbox(photo); });
+    media.appendChild(img);
+    if (photo.uploader_name) {
+      var cap = document.createElement("span");
+      cap.className = "fg-caption";
+      cap.textContent = photo.uploader_name;
+      media.appendChild(cap);
+    }
+    item.appendChild(media);
+
+    var menuBtn = document.createElement("button");
+    menuBtn.type = "button";
+    menuBtn.className = "fg-menu-btn";
+    menuBtn.setAttribute("aria-label", "Menu foto");
+    menuBtn.innerHTML = "<span></span><span></span><span></span>";
+
+    var menu = document.createElement("div");
+    menu.className = "fg-menu";
+    var editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3z" stroke="#152238" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><span>' + t("action.editcaption") + '</span>';
+    var delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "fg-delete";
+    delBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V4.5h6V7M6 7l1 13h10l1-13" stroke="#b33d3d" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><span>' + t("action.delete") + '</span>';
+    menu.appendChild(editBtn);
+    menu.appendChild(delBtn);
+
+    menuBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var wasOpen = menu.classList.contains("is-open");
+      closeAllFgMenus();
+      if (!wasOpen) menu.classList.add("is-open");
+    });
+    editBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      menu.classList.remove("is-open");
+      handleEditPhoto(photo);
+    });
+    delBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      menu.classList.remove("is-open");
+      handleDeletePhoto(photo, item);
+    });
+
+    item.appendChild(menuBtn);
+    item.appendChild(menu);
     return item;
   }
 
@@ -824,12 +866,28 @@
     });
   }
 
+  function renderManageGallery() {
+    manageGalleryGrid.innerHTML = "";
+    if (!photosCache.length) {
+      manageGalleryGrid.hidden = true;
+      manageGalleryEmpty.hidden = false;
+      manageGalleryEmpty.textContent = supabaseLoadError ? t("gallery.loaderror") : t("manage.empty");
+      return;
+    }
+    manageGalleryGrid.hidden = false;
+    manageGalleryEmpty.hidden = true;
+    photosCache.forEach(function (photo) {
+      manageGalleryGrid.appendChild(createManageGalleryItemEl(photo));
+    });
+  }
+
   async function loadPhotos() {
     var photos = await fetchPhotos();
     photosCache = photos || [];
     supabaseLoadError = (photos === null);
     renderHomeGallery();
     if (fullGalleryModal.classList.contains("is-open")) renderFullGallery();
+    if (manageGalleryModal.classList.contains("is-open")) renderManageGallery();
   }
 
   async function initAlbum() {
@@ -866,7 +924,8 @@
       if (!ok) return;
       openPhotoForm("edit", photo.uploader_name || "", async function (data) {
         if (!sb) throw new Error("no supabase client");
-        var updRes = await sb.from("gallery_photos").update({ uploader_name: data.name }).eq("id", photo.id);
+        var caption = data.name ? data.name.trim() : "";
+        var updRes = await sb.from("gallery_photos").update({ uploader_name: caption || null }).eq("id", photo.id);
         if (updRes.error) throw updRes.error;
         showToast(t("toast.captionupdated"));
         await loadPhotos();
@@ -874,8 +933,10 @@
     });
   }
 
+  /* Deleting a photo always re-asks for the passcode, even if the session is
+     already unlocked, as an extra safety check for this destructive action. */
   function handleDeletePhoto(photo, itemEl) {
-    requireCode().then(function (ok) {
+    requireCodeFresh().then(function (ok) {
       if (!ok) return;
       openConfirm(t("confirm.title"), t("confirm.message")).then(function (yes) {
         if (!yes) return;
@@ -909,13 +970,23 @@
   fullGalleryModal.addEventListener("click", function (e) {
     if (e.target === fullGalleryModal) closeModal(fullGalleryModal);
   });
-  fullGalleryAddBtn.addEventListener("click", handleUploadPhoto);
   galleryAddBtn.addEventListener("click", handleUploadPhoto);
-  addRipple(fullGalleryAddBtn);
+
+  function openManageGallery() {
+    renderManageGallery();
+    openModal(manageGalleryModal);
+    loadPhotos();
+  }
+  manageGalleryClose.addEventListener("click", function () { closeModal(manageGalleryModal); });
+  manageGalleryModal.addEventListener("click", function (e) {
+    if (e.target === manageGalleryModal) closeModal(manageGalleryModal);
+  });
+  manageGalleryAddBtn.addEventListener("click", handleUploadPhoto);
+  addRipple(manageGalleryAddBtn);
   if (navManageGalleryBtn) {
     navManageGalleryBtn.addEventListener("click", function () {
       closeNav();
-      setTimeout(openFullGallery, 250);
+      setTimeout(openManageGallery, 250);
     });
   }
 
@@ -1347,6 +1418,7 @@
     if (photoFormModal.classList.contains("is-open")) { closePhotoForm(); return; }
     if (confirmModal.classList.contains("is-open")) { closeConfirm(false); return; }
     if (fullGalleryModal.classList.contains("is-open")) { closeModal(fullGalleryModal); return; }
+    if (manageGalleryModal.classList.contains("is-open")) { closeModal(manageGalleryModal); return; }
     if (schoolModal.classList.contains("is-open")) { closeSchoolModal(); return; }
     if (aboutModal.classList.contains("is-open")) { closeModal(aboutModal); return; }
     if (profilModal.classList.contains("is-open")) { closeModal(profilModal); return; }
