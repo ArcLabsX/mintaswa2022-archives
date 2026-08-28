@@ -76,6 +76,7 @@
 
       <svg class="plane plane-1" data-speed="7" viewBox="0 0 24 24" fill="none"><path d="M21 3L2 10.5l7 2.5m12-10L14 20l-2.5-7m9.5-10L11.5 13" stroke="#152238" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
       <svg class="plane plane-2" data-speed="9" viewBox="0 0 24 24" fill="none"><path d="M21 3L2 10.5l7 2.5m12-10L14 20l-2.5-7m9.5-10L11.5 13" stroke="#152238" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <svg class="plane plane-6" data-speed="11" viewBox="0 0 24 24" fill="none"><path d="M21 3L2 10.5l7 2.5m12-10L14 20l-2.5-7m9.5-10L11.5 13" stroke="#152238" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
 
       <div class="hero-content">
         <h1>CLASS OF 2022<br>MINU TAMBAK SUMUR</h1>
@@ -167,6 +168,7 @@
       </div>
       <svg class="plane plane-3" data-speed="8" viewBox="0 0 24 24" fill="none"><path d="M21 3L2 10.5l7 2.5m12-10L14 20l-2.5-7m9.5-10L11.5 13" stroke="#152238" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
       <svg class="plane plane-4" data-speed="10" viewBox="0 0 24 24" fill="none"><path d="M21 3L2 10.5l7 2.5m12-10L14 20l-2.5-7m9.5-10L11.5 13" stroke="#152238" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <svg class="plane plane-7" data-speed="12" viewBox="0 0 24 24" fill="none"><path d="M21 3L2 10.5l7 2.5m12-10L14 20l-2.5-7m9.5-10L11.5 13" stroke="#152238" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
 
       <form class="pesan-form" id="pesanForm">
         <div class="pesan-feed" id="pesanFeed">
@@ -181,6 +183,7 @@
   </main>
 
   <footer class="site-footer">
+    <p class="footer-code">Kode : mintaswa2022</p>
     <p data-i18n="footer.text">Mintaswa 2022 Archive · Dibuat dengan ♥ untuk Class of 2022 MINU Tambak Sumur</p>
   </footer>
 </div>
@@ -257,10 +260,11 @@
 <!-- ===== Mintaswa / school modal ===== -->
 <div class="modal" id="schoolModal" role="dialog" aria-modal="true">
   <div class="modal-card modal-card-lg">
-    <button class="modal-close" id="schoolModalClose" aria-label="Tutup">&times;</button>
-    <h3>Mintaswa</h3>
-    <p data-i18n="mintaswa.desc">MINU Tambak Sumur (2016–2022) pernah menjadi saksi bisu masa-masa saat kita pertama kali belajar, berteman, dan bertumbuh bersama.</p>
-
+    <div class="modal-header-sticky">
+      <h3>Mintaswa</h3>
+      <button class="modal-close" id="schoolModalClose" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="modal-scroll-body">
     <div class="school-gallery" id="schoolGallery">
       <div class="gallery-skel"></div>
       <div class="gallery-skel"></div>
@@ -269,7 +273,7 @@
 
     <div class="school-audio-wrap" id="schoolAudioWrap" hidden>
       <div class="school-audio-card">
-        <span class="school-audio-label" data-i18n="school.audio">🔊 Suara Mintaswa</span>
+        <span class="school-audio-label" data-i18n="school.audio">🔊 Mars Madrasah Ibtidaiyah</span>
         <audio id="schoolAudio" controls preload="none"></audio>
       </div>
     </div>
@@ -308,42 +312,51 @@
         <li class="siswa-item"><span class="siswa-no">22.</span><span class="siswa-nick">Bu Emi</span><span class="siswa-name">Roudhotul Islami</span></li>
       </ol>
     </div>
+    </div>
   </div>
 </div>
 
 <!-- ===== Full gallery modal (view-only: all photos, caption only) ===== -->
 <div class="modal modal-fullgallery" id="fullGalleryModal" role="dialog" aria-modal="true">
   <div class="modal-card modal-card-lg">
-    <button class="modal-close" id="fullGalleryClose" aria-label="Tutup">&times;</button>
-    <h3 data-i18n="kenangan.title">Album Angkatan</h3>
-    <div class="full-gallery-grid" id="fullGalleryGrid">
-      <div class="gallery-skel"></div>
-      <div class="gallery-skel"></div>
-      <div class="gallery-skel"></div>
-      <div class="gallery-skel"></div>
-      <div class="gallery-skel"></div>
-      <div class="gallery-skel"></div>
+    <div class="modal-header-sticky">
+      <h3 data-i18n="kenangan.title">Album Angkatan</h3>
+      <button class="modal-close" id="fullGalleryClose" aria-label="Tutup">&times;</button>
     </div>
-    <p class="gallery-empty" id="fullGalleryEmpty" hidden data-i18n="gallery.empty">Belum ada foto. Jadi yang pertama upload!</p>
+    <div class="modal-scroll-body">
+      <div class="full-gallery-grid" id="fullGalleryGrid">
+        <div class="gallery-skel"></div>
+        <div class="gallery-skel"></div>
+        <div class="gallery-skel"></div>
+        <div class="gallery-skel"></div>
+        <div class="gallery-skel"></div>
+        <div class="gallery-skel"></div>
+      </div>
+      <p class="gallery-empty" id="fullGalleryEmpty" hidden data-i18n="gallery.empty">Belum ada foto. Jadi yang pertama upload!</p>
+    </div>
   </div>
 </div>
 
 <!-- ===== Kelola Foto modal (manage: Supabase-uploaded photos only, edit/delete) ===== -->
 <div class="modal modal-fullgallery" id="manageGalleryModal" role="dialog" aria-modal="true">
   <div class="modal-card modal-card-lg modal-card-manage">
-    <button class="modal-close" id="manageGalleryClose" aria-label="Tutup">&times;</button>
-    <h3 data-i18n="manage.title">Kelola Foto</h3>
-    <p class="modal-hint-text" data-i18n="manage.hint">Foto yang diunggah pengunjung. Foto arsip dari GitHub tidak ditampilkan di sini.</p>
-    <button class="gallery-add" id="manageGalleryAddBtn" type="button">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M12 5v14M5 12h14" stroke="#152238" stroke-width="2" stroke-linecap="round"/></svg>
-      <span data-i18n="kenangan.addphoto">Tambah foto dari galeri</span>
-    </button>
-    <div class="full-gallery-grid" id="manageGalleryGrid">
-      <div class="gallery-skel"></div>
-      <div class="gallery-skel"></div>
-      <div class="gallery-skel"></div>
+    <div class="modal-header-sticky">
+      <h3 data-i18n="manage.title">Kelola Foto</h3>
+      <button class="modal-close" id="manageGalleryClose" aria-label="Tutup">&times;</button>
     </div>
-    <p class="gallery-empty" id="manageGalleryEmpty" hidden data-i18n="manage.empty">Belum ada foto yang diunggah pengunjung.</p>
+    <div class="modal-scroll-body">
+      <p class="modal-hint-text" data-i18n="manage.hint">Foto yang diunggah pengunjung. Foto arsip dari GitHub tidak ditampilkan di sini.</p>
+      <button class="gallery-add" id="manageGalleryAddBtn" type="button">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M12 5v14M5 12h14" stroke="#152238" stroke-width="2" stroke-linecap="round"/></svg>
+        <span data-i18n="kenangan.addphoto">Tambah foto dari galeri</span>
+      </button>
+      <div class="full-gallery-grid" id="manageGalleryGrid">
+        <div class="gallery-skel"></div>
+        <div class="gallery-skel"></div>
+        <div class="gallery-skel"></div>
+      </div>
+      <p class="gallery-empty" id="manageGalleryEmpty" hidden data-i18n="manage.empty">Belum ada foto yang diunggah pengunjung.</p>
+    </div>
   </div>
 </div>
 
@@ -353,7 +366,7 @@
     <button class="modal-close" id="passcodeClose" aria-label="Tutup">&times;</button>
     <h3 data-i18n="code.title">Masukkan Kode</h3>
     <p data-i18n="code.hint">Fitur ini khusus untuk teman-teman Mintaswa 2022. Masukkan kode rahasia untuk melanjutkan.</p>
-    <input type="password" id="passcodeInput" data-i18n-ph="code.placeholder" placeholder="Kode rahasia" autocomplete="off">
+    <input type="text" id="passcodeInput" data-i18n-ph="code.placeholder" placeholder="Kode rahasia" autocomplete="off">
     <p class="modal-error" id="passcodeError" hidden data-i18n="code.wrong">Kode salah, coba lagi.</p>
     <div class="modal-actions">
       <button type="button" class="btn btn-ghost" id="passcodeCancel" data-i18n="action.cancel">Batal</button>
