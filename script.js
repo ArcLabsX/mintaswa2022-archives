@@ -154,7 +154,7 @@
       "editphoto.error": "Gagal menyimpan perubahan. Coba lagi.",
       "confirm.title": "Hapus foto ini?",
       "confirm.message": "Tindakan ini tidak bisa dibatalkan.",
-      "school.audio": "🔊 Suara Mintaswa",
+      "school.audio": "🔊 Mars Madrasah Ibtidaiyah",
       "school.headmaster": "Kepala Sekolah",
       "school.staff": "Guru & Staff",
       "school.nophotos": "Foto sekolah belum tersedia.",
@@ -227,7 +227,7 @@
       "editphoto.error": "Couldn't save the change. Try again.",
       "confirm.title": "Delete this photo?",
       "confirm.message": "This action can't be undone.",
-      "school.audio": "🔊 Sound of Mintaswa",
+      "school.audio": "🔊 Madrasah Ibtidaiyah Anthem",
       "school.headmaster": "Headmaster",
       "school.staff": "Teachers & Staff",
       "school.nophotos": "School photos aren't available yet.",
@@ -920,16 +920,13 @@
   }
 
   function handleEditPhoto(photo) {
-    requireCode().then(function (ok) {
-      if (!ok) return;
-      openPhotoForm("edit", photo.uploader_name || "", async function (data) {
-        if (!sb) throw new Error("no supabase client");
-        var caption = data.name ? data.name.trim() : "";
-        var updRes = await sb.from("gallery_photos").update({ uploader_name: caption || null }).eq("id", photo.id);
-        if (updRes.error) throw updRes.error;
-        showToast(t("toast.captionupdated"));
-        await loadPhotos();
-      });
+    openPhotoForm("edit", photo.uploader_name || "", async function (data) {
+      if (!sb) throw new Error("no supabase client");
+      var caption = data.name ? data.name.trim() : "";
+      var updRes = await sb.from("gallery_photos").update({ uploader_name: caption || null }).eq("id", photo.id);
+      if (updRes.error) throw updRes.error;
+      showToast(t("toast.captionupdated"));
+      await loadPhotos();
     });
   }
 
