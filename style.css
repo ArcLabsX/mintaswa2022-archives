@@ -179,16 +179,19 @@ p{ margin: 0; }
 }
 
 .hero-sky{ position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.cloud{ position: absolute; width: 130px; opacity: .95; animation: cloud-drift 16s ease-in-out infinite; }
-.cloud-a{ top: 18px; left: -20px; width: 110px; animation-duration: 18s; }
-.cloud-b{ top: 60px; right: -30px; width: 150px; opacity: .8; animation-duration: 22s; animation-direction: reverse; }
-.cloud-c{ bottom: 60px; left: -10px; width: 90px; opacity: .7; animation-duration: 14s; animation-delay: -4s; }
-.cloud-d{ top: 10px; left: -25px; width: 120px; animation-duration: 19s; animation-delay: -8s; }
-.cloud-e{ bottom: 10px; right: -25px; width: 140px; opacity: .85; animation-duration: 24s; animation-direction: reverse; animation-delay: -6s; }
-@keyframes cloud-drift{
-  0%{ transform: translateX(0) translateY(0); }
-  50%{ transform: translateX(16px) translateY(-5px); }
-  100%{ transform: translateX(0) translateY(0); }
+.cloud{ position: absolute; width: 130px; opacity: .95; animation: cloud-drift-ltr 26s linear infinite; }
+.cloud-a{ top: 18px; left: -20px; width: 110px; animation-duration: 28s; }
+.cloud-b{ top: 60px; right: -30px; width: 150px; opacity: .8; animation: cloud-drift-rtl 32s linear infinite; animation-delay: -6s; }
+.cloud-c{ bottom: 60px; left: -10px; width: 90px; opacity: .7; animation-duration: 21s; animation-delay: -9s; }
+.cloud-d{ top: 10px; left: -25px; width: 120px; animation-duration: 25s; animation-delay: -13s; }
+.cloud-e{ bottom: 10px; right: -25px; width: 140px; opacity: .85; animation: cloud-drift-rtl 36s linear infinite; animation-delay: -11s; }
+@keyframes cloud-drift-ltr{
+  0%{ transform: translateX(-130px); }
+  100%{ transform: translateX(430px); }
+}
+@keyframes cloud-drift-rtl{
+  0%{ transform: translateX(130px); }
+  100%{ transform: translateX(-430px); }
 }
 
 .sparkle{
@@ -208,6 +211,8 @@ p{ margin: 0; }
 .plane-2{ top: 130px; left: 74%; width: 18px; height: 18px; offset-path: path('M0,0 C22,14 48,-8 68,16 C86,36 104,22 122,42'); animation: fly-2 12s linear infinite; animation-delay: 2s; }
 .plane-3{ top: 26px; left: 12%; offset-path: path('M0,0 C28,-16 60,8 96,-20 C120,-38 140,-24 155,-46'); animation: fly-1 10s linear infinite; }
 .plane-4{ top: 68px; right: 8%; left: auto; width: 18px; height: 18px; offset-path: path('M0,0 C-22,12 -46,-6 -66,14 C-84,32 -102,20 -118,38'); animation: fly-2 11s linear infinite; animation-delay: 1s; }
+.plane-6{ bottom: 28px; left: 20%; width: 16px; height: 16px; offset-path: path('M0,0 C25,-15 55,10 85,-15 C110,-35 130,-20 145,-40'); animation: fly-1 13s linear infinite; animation-delay: 3.5s; }
+.plane-7{ bottom: 24px; right: 15%; left: auto; width: 16px; height: 16px; offset-path: path('M0,0 C-25,-12 -55,8 -85,-12 C-108,-30 -128,-18 -145,-36'); animation: fly-2 13.5s linear infinite; animation-delay: 2.5s; }
 
 @keyframes fly-1{
   0%{ offset-distance: 0%; opacity: 0; }
@@ -417,6 +422,10 @@ p{ margin: 0; }
 .site-footer{
   text-align: center; padding: 22px 20px 34px; font-size: 11.5px; color: var(--text-muted);
 }
+.footer-code{
+  font-family: "Courier New", monospace; font-size: 11px; font-weight: 700;
+  letter-spacing: .5px; color: var(--navy-soft); margin-bottom: 8px;
+}
 
 /* ================================ Lightbox =============================== */
 .lightbox{
@@ -496,10 +505,10 @@ p{ margin: 0; }
 
 /* ------------------------------ School modal (Mintaswa) ------------------------- */
 .school-gallery{
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 16px;
 }
 .school-gallery-item{
-  border: 1.5px solid var(--navy); border-radius: 12px; overflow: hidden; padding: 0;
+  border: 1.5px solid var(--navy); border-radius: 6px; overflow: hidden; padding: 0;
   aspect-ratio: 1 / 1; background: var(--card-bg); position: relative;
   transition: transform .18s ease, box-shadow .2s ease;
 }
@@ -564,7 +573,21 @@ p{ margin: 0; }
 .upload-dropzone[hidden]{ display: none; }
 
 /* ------------------------------- Full gallery modal ----------------------------- */
-.modal-card-lg{ max-width: 480px; padding-bottom: 26px; }
+.modal-card-lg{
+  max-width: 480px; padding: 0; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.modal-header-sticky{
+  position: sticky; top: 0; z-index: 5; flex-shrink: 0;
+  background: var(--cream); border-radius: 26px 26px 0 0;
+  padding: 24px 24px 14px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+}
+.modal-header-sticky h3{ margin-bottom: 0; padding-right: 0; }
+.modal-header-sticky .modal-close{ position: static; flex-shrink: 0; }
+.modal-scroll-body{
+  overflow-y: auto; padding: 0 24px 26px; flex: 1; -webkit-overflow-scrolling: touch;
+}
+.modal-card-manage .modal-header-sticky{ background: #cfe7f8; }
 .modal-fullgallery .gallery-add{ margin: 4px 0 16px; }
 
 /* Kelola Foto: distinct blue theme so it never feels like the plain view gallery */
@@ -572,18 +595,18 @@ p{ margin: 0; }
   background: linear-gradient(180deg, #cfe7f8 0%, #eef8fc 55%, #f5efe2 100%);
 }
 .modal-card-manage h3{ color: var(--navy); }
-.modal-hint-text{ font-size: 12.5px; color: var(--navy-soft); margin: -8px 0 14px; line-height: 1.5; }
+.modal-hint-text{ font-size: 12.5px; color: var(--navy-soft); margin: 10px 0 14px; line-height: 1.5; }
 .modal-card-manage .gallery-add{ border-color: rgba(21,34,56,0.35); background: rgba(255,255,255,0.4); }
 .modal-card-manage .fg-media{ border-color: rgba(21,34,56,0.6); }
 .full-gallery-grid{
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
 }
 .full-gallery-grid[hidden]{ display: none; }
 .fg-item{
   position: relative; animation: pop-in .35s cubic-bezier(.22,.68,0,1.02);
 }
 .fg-media{
-  border-radius: 12px; overflow: hidden; aspect-ratio: 1 / 1;
+  border-radius: 6px; overflow: hidden; aspect-ratio: 1 / 1;
   background: var(--card-bg); border: 1.5px solid var(--navy); position: relative;
 }
 .fg-media img{ width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
