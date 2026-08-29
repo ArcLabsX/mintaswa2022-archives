@@ -1014,9 +1014,27 @@
   var currentIndex = 0;
 
   var zoomScale = 1, panX = 0, panY = 0;
+  var ZOOM_BASE_W = 88, ZOOM_BASE_H = 78; // vw / vh at rest (matches the CSS default)
+
+  /* Zooming changes the image's actual rendered box size (max-width/max-height)
+     rather than a CSS transform:scale. A transform:scale() only stretches the
+     bitmap the browser already decoded for the smaller resting size, which
+     looks soft/blurry when enlarged. Growing the real box forces the browser
+     to re-render from the full-resolution source, keeping zoomed photos crisp.
+     transform:translate() (no scale) is still used for panning, since
+     translation never needs resampling and stays perfectly sharp. */
   function applyZoomTransform(animate) {
-    lightboxImg.style.transition = animate ? "transform .25s ease" : "none";
-    lightboxImg.style.transform = "translate(" + panX + "px, " + panY + "px) scale(" + zoomScale + ")";
+    lightboxImg.style.transition = animate
+      ? "max-width .25s ease, max-height .25s ease, transform .25s ease"
+      : "none";
+    if (zoomScale > 1.001) {
+      lightboxImg.style.maxWidth = (ZOOM_BASE_W * zoomScale) + "vw";
+      lightboxImg.style.maxHeight = (ZOOM_BASE_H * zoomScale) + "vh";
+    } else {
+      lightboxImg.style.maxWidth = "";
+      lightboxImg.style.maxHeight = "";
+    }
+    lightboxImg.style.transform = "translate(" + panX + "px, " + panY + "px)";
     lightboxImg.classList.toggle("is-zoomed", zoomScale > 1.01);
   }
   function clampPan() {
@@ -1026,6 +1044,8 @@
   }
   function resetZoom() {
     zoomScale = 1; panX = 0; panY = 0;
+    lightboxImg.style.maxWidth = "";
+    lightboxImg.style.maxHeight = "";
     applyZoomTransform(false);
   }
 
@@ -1042,6 +1062,7 @@
   }
   function openLightboxFromSet(list, index) {
     lightboxPhotos = list;
+    resetZoom();
     showPhoto(index);
     lightbox.classList.add("is-open");
     document.body.style.overflow = "hidden";
@@ -1078,7 +1099,11 @@
     if (Math.abs(dx) > 40) showPhoto(currentIndex + (dx < 0 ? 1 : -1));
   }, { passive: true });
 
-  /* Pinch-to-zoom + drag-to-pan */
+  /* Pinch-to-zoom + drag-to-pan. Double-tap-to-zoom was removed: it relied on
+     detecting two clicks in quick succession, which on some mobile browsers
+     can misfire from normal single-tap touch/click event duplication and
+     leave a photo stuck zoomed-in (looking cropped). Pinch and scroll-wheel
+     are deliberate, unambiguous gestures that don't have that risk. */
   function touchDist(t1, t2) {
     var dx = t1.clientX - t2.clientX, dy = t1.clientY - t2.clientY;
     return Math.sqrt(dx * dx + dy * dy);
@@ -1118,25 +1143,9 @@
   }, { passive: false });
   lightboxImg.addEventListener("touchend", function () {
     isPanning = false;
+    pinchStartDist = 0;
     lightboxImg.classList.remove("is-panning");
     if (zoomScale < 1.05) resetZoom();
-  });
-
-  /* Double-tap / double-click to toggle zoom */
-  var imgClickTimer = null;
-  lightboxImg.addEventListener("click", function () {
-    if (imgClickTimer) {
-      clearTimeout(imgClickTimer);
-      imgClickTimer = null;
-      if (zoomScale > 1.01) {
-        resetZoom();
-      } else {
-        zoomScale = 2.4; panX = 0; panY = 0;
-        applyZoomTransform(true);
-      }
-    } else {
-      imgClickTimer = setTimeout(function () { imgClickTimer = null; }, 280);
-    }
   });
 
   /* Mouse-wheel zoom (desktop) */
@@ -1144,7 +1153,7 @@
     e.preventDefault();
     zoomScale = Math.max(1, Math.min(4, zoomScale + (e.deltaY < 0 ? 0.18 : -0.18)));
     clampPan();
-    applyZoomTransform(false);
+    applyZoomTransform(true);
     if (zoomScale < 1.05) resetZoom();
   }, { passive: false });
 
